@@ -33,8 +33,8 @@ export default function HomeScreen() {
             password: values.senha,
           })
           .then(() => {
-            // router.push('/auth-page-static');
-            router.push('/auth-page-ssr');
+            router.push('/auth-page-static');
+            // router.push('/auth-page-ssr');
           })
           .catch((err) => {
             console.log(err);
