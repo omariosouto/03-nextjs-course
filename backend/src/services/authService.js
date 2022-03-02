@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { getTokenFromHeaders } from '../utils/getTokenFromHeaders';
 
 const ACCESSTOKEN_SECRET = process.env.ACCESSTOKEN_SECRET;
-const ACCESSTOKEN_EXPIRATION = '60s';
+const ACCESSTOKEN_EXPIRATION = '3s';
 const REFRESHTOKEN_SECRET = process.env.REFRESHTOKEN_SECRET;
 const REFRESHTOKEN_EXPIRATION = '7d';
 
