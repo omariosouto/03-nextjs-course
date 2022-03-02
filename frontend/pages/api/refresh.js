@@ -7,11 +7,11 @@ const REFRESH_TOKEN_NAME = 'REFRESH_TOKEN_NAME';
 const controllers = {
   async storeRefreshToken(req, res) {
     const ctx = { req, res };
-    console.log('handler', req.body);
 
     nookies.set(ctx, REFRESH_TOKEN_NAME, req.body.refresh_token, {
       httpOnly: true,
       sameSite: 'lax',
+      path: '/',
     })
 
     res.json({
@@ -31,7 +31,8 @@ const controllers = {
   async regenerateTokens(req ,res) {
     const ctx = { req, res };
     const cookies = nookies.get(ctx);
-    const refresh_token = cookies[REFRESH_TOKEN_NAME];
+    const refresh_token = cookies[REFRESH_TOKEN_NAME] || req.body.refresh_token;
+    console.log('/api/refresh [regenerateTokens]', refresh_token);
 
     const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/refresh`, {
       method: 'POST',
@@ -44,15 +45,16 @@ const controllers = {
       nookies.set(ctx, REFRESH_TOKEN_NAME, refreshResponse.body.data.refresh_token, {
         httpOnly: true,
         sameSite: 'lax',
+        path: '/',
       })
       
       tokenService.save(refreshResponse.body.data.access_token, ctx);
 
-      res.json({
-        refreshResponse
+      res.status(200).json({
+        data: refreshResponse.body.data
       })
     } else {
-      res.json({
+      res.status(401).json({
         status: 401,
         message: 'Não autorizado'
       })
@@ -63,6 +65,7 @@ const controllers = {
 const controllerBy = {
   POST: controllers.storeRefreshToken,
   GET: controllers.regenerateTokens,
+  PUT: controllers.regenerateTokens,
   // GET: controllers.displayCookies,
 }
 
