@@ -12,6 +12,20 @@ export const authService = {
       const body = respostaDoServidor.body;
 
       tokenService.save(body.data.access_token);
+
+      return body;
+    })
+    .then(async ({ data }) => {
+      const { refresh_token }   = data;
+
+      const response = await HttpClient('/api/refresh', {
+        method: 'POST',
+        body: {
+          refresh_token
+        }
+      })
+
+      console.log(response);
     })
   },
   async getSession(ctx = null) {
